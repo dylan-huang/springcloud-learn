@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
+import sun.nio.ch.DefaultSelectorProvider;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @Slf4j
@@ -61,4 +63,18 @@ public class PaymentController {
         return serverPort;
     }
 
+    /**
+     * feign 超时控制
+     */
+    @GetMapping(value = "payment/feign/timeout")
+    public String paymentFeignTimeout(){
+        try {
+            //暂停3秒
+            TimeUnit.SECONDS.sleep(3);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return serverPort;
+    }
 }

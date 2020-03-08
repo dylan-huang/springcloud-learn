@@ -1,13 +1,17 @@
-package springcloud.controller;
+package com.atguigu.springcloud.controller;
 
 import com.atguigu.springcloud.entities.CommonResult;
 import com.atguigu.springcloud.entities.Payment;
+import com.atguigu.springcloud.service.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
-import springcloud.service.PaymentService;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @Slf4j
@@ -16,6 +20,8 @@ public class PaymentController {
     PaymentService paymentService;
     @Value("${server.port})")
     private String serverPort;
+    @Resource
+    private DiscoveryClient discoveryClient;
 
     @PostMapping("payment/create")
     public CommonResult create(@RequestBody Payment payment){
@@ -39,8 +45,35 @@ public class PaymentController {
             return new CommonResult(444,"failure",null);
         }
     }
+    @GetMapping(value = "payment/discovery")
+    public Object discovery() {
+        List<String> services = discoveryClient.getServices();
+        for (String service : services) {
+            log.info("======== GET SERVICE" + service);
+        }
+        List<ServiceInstance> instances = discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
+        for (ServiceInstance instance : instances) {
+            log.info("======== GET INSTANCE" + instance);
+        }
+        return this.discoveryClient;
+    }
     @GetMapping(value = "/payment/lb")
     public String getPaymentLB() {
+        return serverPort;
+    }
+
+    /**
+     * feign 超时控制
+     */
+    @GetMapping(value = "payment/feign/timeout")
+    public String paymentFeignTimeout(){
+        try {
+            //暂停3秒
+            TimeUnit.SECONDS.sleep(3);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         return serverPort;
     }
 
