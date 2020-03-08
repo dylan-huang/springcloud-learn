@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.controller;
+package springcloud.controller;
 
 import com.atguigu.springcloud.entities.CommonResult;
 import com.atguigu.springcloud.entities.Payment;
@@ -38,6 +38,10 @@ public class PaymentController {
             log.info("查询失败");
             return new CommonResult(444,"failure",null);
         }
+    }
+    @GetMapping(value = "/payment/lb")
+    public String getPaymentLB() {
+        return serverPort;
     }
 
 }
