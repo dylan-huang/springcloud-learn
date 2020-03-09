@@ -1,0 +1,10 @@
+server:
+  port: 9001
+
+
+#暴露全部的监控信息  Unable to connect to Command Metric Stream.
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
